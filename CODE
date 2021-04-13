@@ -1,0 +1,100 @@
+// App was made by Jermartyno, icon pack by Elttob.
+
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.IO;
+
+namespace Vanilla_Icons_Installer
+{
+    public partial class Form1 : Form
+    {
+        string selected = "LightColorful";
+
+        void RefreshPreview()
+        {
+            selected = "";
+            if (LightTheme.Checked)
+            {
+                selected += "Light";
+            }
+            else
+            {
+                selected += "Dark";
+            }
+            if (ColorfulStyle.Checked)
+            {
+                selected += "Colorful";
+            }
+            else
+            {
+                selected += "Mono";
+            }
+            try
+            {
+                PreviewPicture.Image = Image.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", selected, "Preview.png"));
+            }
+            catch
+            {
+                MessageBox.Show("Could not refresh preview. Image directories seems to be missing / changed.", "Error", MessageBoxButtons.OK);
+            }
+        }
+
+        public Form1()
+        {
+            InitializeComponent();
+            RefreshPreview();
+        }
+
+        private void IconPackLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://devforum.roblox.com/t/vanilla-1-1-a-modern-look-for-your-studio/935745");
+        }
+
+        private void LightTheme_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshPreview();
+        }
+
+        private void DarkTheme_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshPreview();
+        }
+
+        private void ColorfulStyle_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshPreview();
+        }
+
+        private void MonoStyle_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshPreview();
+        }
+
+        private void InstallButton_Click(object sender, EventArgs e)
+        {
+            bool success = true;
+            InstallButton.Enabled = false;
+            InstallButton.Enabled = true;
+            try
+            {
+                foreach (string directory in Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\AppData\Local\Roblox\versions"))
+                {
+                    if (Directory.Exists(directory + @"\content\textures"))
+                    {
+                        File.Copy(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", selected, "ClassImages.png"), directory + @"\content\textures\ClassImages.png", true);
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                success = false;
+                MessageBox.Show("An error occured while installing Icon Pack.\nMessage: '" + exception.ToString() + "'.", "Error", MessageBoxButtons.OK);
+            }
+            if (success)
+            {
+                MessageBox.Show("Icon Pack was successfully installed.", "Info", MessageBoxButtons.OK);
+            }
+        }
+    }
+}
